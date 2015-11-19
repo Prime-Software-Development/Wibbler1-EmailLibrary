@@ -1,0 +1,9 @@
+{
+	"name": "Trunk/EmailLibrary",
+	"autoload":{
+		"classmap": ["/src/"]
+	},
+	"require": {
+		"swiftmailer/swiftmailer": "^5.4"
+	}
+}
