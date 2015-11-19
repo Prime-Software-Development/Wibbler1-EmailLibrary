@@ -1,0 +1,16 @@
+{
+	"name": "Trunk/EmailLibrary",
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "http://packages.trunksoftware.co.uk"
+		}
+	],
+	"autoload":{
+		"classmap": ["/src/"]
+	},
+	"require": {
+		"swiftmailer/swiftmailer": "^5.4",
+		"Trunk/PreferencesLibrary": "0.*"
+	}
+}
