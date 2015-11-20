@@ -70,15 +70,15 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 			$body = $this->replace_placeholders( $body, $data_array );
 		}
 
-		// Update the body - it may have inline images
-		$body = $this->get_body_html( $email->getNamespace(), $message, $body );
-
 		$message = \Swift_Message::newInstance();
 		$message->setSubject( $subject );
 		$message->setFrom( $from_address, $from_name );
 		$message->setTo( $to );
-		$message->setBody( $body );
 		$message->setContentType( "text/html" );
+
+		// Update the body - it may have inline images
+		$body = $this->get_body_html( $email->getNamespace(), $message, $body );
+		$message->setBody( $body );
 
 		// If we have an attachment
 		if ( !empty( $attachments ) ) {
