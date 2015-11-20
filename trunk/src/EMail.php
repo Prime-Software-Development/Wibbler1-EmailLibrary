@@ -70,6 +70,9 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 			$body = $this->replace_placeholders( $body, $data_array );
 		}
 
+		// Update the body - it may have inline images
+		$body = $this->get_body_html( $email->getNamespace(), $message, $body );
+
 		$message = \Swift_Message::newInstance();
 		$message->setSubject( $subject );
 		$message->setFrom( $from_address, $from_name );
@@ -105,6 +108,58 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 		return $result == 0;
 	}
 
+
+	/**
+	 * Gets the email footer to display - embedding images if required
+	 * @param \Swift_Message $message
+	 * @return mixed|string
+	 */
+	private function get_body_html( $namespace, \Swift_Message &$message, $text ){
+		$document_ids = [];
+		$matches = [];
+
+		// Extract document ids
+		preg_match_all( "{#[0-9]+#}", $text, $matches );
+		foreach( $matches[0] as $match ) {
+			$document_ids[] = trim( $match, "{#}" );
+		}
+
+		// get documents
+		$doc_query = "\\" . $namespace . "\\DocumentQuery";
+		$documents = $doc_query::create()
+				->filterById( $document_ids, \Criteria::IN )
+				->find();
+
+		$CIDs = [];
+		// Embed all the documents and get their CIDs
+		foreach( $documents as $doc ) {
+			if( is_file( $doc->get_file() ) ) {
+				$temp_cid = $message->embed( \Swift_Image::fromPath( $doc->get_file() ) );
+				$CIDs[ $doc->getId() ] = $temp_cid;
+			}
+		}
+		// Replace document ids with CIDs
+		$text = EMail::replace_embedded_ids( $CIDs, $text );
+
+		return $text;
+	}
+
+
+	/**
+	 * Replaces the variables in the message with the CID provided
+	 * @param $params
+	 * @param $message
+	 * @return mixed
+	 */
+	static function replace_embedded_ids( $params, $message ) {
+
+		foreach ($params as $key => $value) {
+			$message = str_replace("{#" . $key . "#}", $value, $message);
+		}
+
+		return $message;
+
+	}
 
 }
 
@@ -211,6 +266,9 @@ class Message {
 		return $this->from_address;
 	}
 
+	public function getNamespace() {
+		return $this->namespace;
+	}
 	public function getFromName() {
 		return $this->from_name;
 	}
