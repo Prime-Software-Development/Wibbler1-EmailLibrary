@@ -1,5 +1,6 @@
 <?php
 namespace Trunk\EmailLibrary\EMail;
+use Propel\Runtime\ActiveQuery\Criteria as Criteria;
 
 /**
  * TrunkNetworks EMail Helpers
@@ -127,7 +128,7 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 		// get documents
 		$doc_query = "\\" . $namespace . "\\DocumentQuery";
 		$documents = $doc_query::create()
-				->filterById( $document_ids, \Criteria::IN )
+				->filterById( $document_ids, Criteria::IN )
 				->find();
 
 		$CIDs = [];
