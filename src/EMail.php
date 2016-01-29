@@ -125,6 +125,11 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 			$document_ids[] = trim( $match, "{#}" );
 		}
 
+		preg_match_all( "/\[#[0-9]+#\]/", $text, $matches );
+		foreach( $matches[0] as $match ) {
+			$document_ids[] = trim( $match, "[#]" );
+		}
+
 		// get documents
 		$doc_query = "\\" . $namespace . "\\DocumentQuery";
 		$documents = $doc_query::create()
@@ -156,6 +161,7 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 
 		foreach ($params as $key => $value) {
 			$message = str_replace("{#" . $key . "#}", $value, $message);
+			$message = str_replace("[#" . $key . "#]", $value, $message);
 		}
 
 		return $message;
