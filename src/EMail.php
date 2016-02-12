@@ -184,6 +184,8 @@ class Message {
 	// String
 	protected $body = '';
 
+	protected $params = array();
+
 	/**
 	 * Namespace the documents are under
 	 * @var string
@@ -276,6 +278,7 @@ class Message {
 	public function getNamespace() {
 		return $this->namespace;
 	}
+
 	public function getFromName() {
 		return $this->from_name;
 	}
@@ -288,12 +291,29 @@ class Message {
 		return $this->subject;
 	}
 
+	public function getReadySubject() {
+		return $this->replace_placeholders( $this->subject , $this->params );
+	}
+
 	public function setBody( $body ) {
 		$this->body = $body;
 	}
 
 	public function getBody() {
 		return $this->body;
+	}
+
+	public function getReadyBody() {
+		return $this->replace_placeholders( $this->body , $this->params );
+	}
+
+	public function setParams( array $params ) {
+		$this->params = $params;
+		return $this;
+	}
+
+	public function getParams() {
+		return $this->params;
 	}
 
 	public function setAttachments( $attachments ) {
@@ -332,6 +352,15 @@ class Message {
 		foreach( $attachments as $attachment ) {
 			$this->addAttachment( $attachment );
 		}
+	}
+
+	private function replace_placeholders( $message, $options ) {
+
+		foreach ( $options as $key => $value ) {
+			$message = str_replace( "{{" . $key . "}}", $value, $message );
+		}
+
+		return $message;
 	}
 
 	/**
