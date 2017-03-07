@@ -368,7 +368,7 @@ class Message {
 	 * @param $group_code
 	 * @return Message
 	 */
-	public static function createFromPrefGroup( $namespace, $group_code, $to_address = [] ) {
+	public static function createFromPrefGroup( $namespace, $group_code, $to_address = [], $from_address = null ) {
 
 		$query_function = "\\" . $namespace . "\\PreferencesGroupQuery";
 		$pref_group = $query_function::create()
@@ -381,7 +381,7 @@ class Message {
 			$pref_group->getEMailSubject(),
 			$pref_group->getEMailBody(),
 			$to_address,
-			$pref_group->getEMailFrom()
+			$from_address ? $from_address : $pref_group->getEMailFrom()
 		);
 		$email->namespace = $namespace;
 		$email->addAttachments( $pref_group->get_documents() );
