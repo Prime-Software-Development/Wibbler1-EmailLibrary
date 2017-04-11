@@ -130,22 +130,24 @@ class EMail extends \Trunk\Wibbler\Modules\base  {
 			$document_ids[] = trim( $match, "[#]" );
 		}
 
-		// get documents
-		$doc_query = "\\" . $namespace . "\\DocumentQuery";
-		$documents = $doc_query::create()
-				->filterById( $document_ids, Criteria::IN )
-				->find();
+		if ( count($document_ids) > 0 ) {
+			// get documents
+			$doc_query = "\\" . $namespace . "\\DocumentQuery";
+			$documents = $doc_query::create()
+					->filterById( $document_ids, Criteria::IN )
+					->find();
 
-		$CIDs = [];
-		// Embed all the documents and get their CIDs
-		foreach( $documents as $doc ) {
-			if( is_file( $doc->get_file() ) ) {
-				$temp_cid = $message->embed( \Swift_Image::fromPath( $doc->get_file() ) );
-				$CIDs[ $doc->getId() ] = $temp_cid;
+			$CIDs = [];
+			// Embed all the documents and get their CIDs
+			foreach( $documents as $doc ) {
+				if( is_file( $doc->get_file() ) ) {
+					$temp_cid = $message->embed( \Swift_Image::fromPath( $doc->get_file() ) );
+					$CIDs[ $doc->getId() ] = $temp_cid;
+				}
 			}
+			// Replace document ids with CIDs
+			$text = EMail::replace_embedded_ids( $CIDs, $text );
 		}
-		// Replace document ids with CIDs
-		$text = EMail::replace_embedded_ids( $CIDs, $text );
 
 		return $text;
 	}
