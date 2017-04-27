@@ -7,8 +7,12 @@
 		}
 	],
 	"autoload":{
-		"classmap": ["/src/"]
-	},
+		"psr-4": {
+		  "Trunk\\EmailLibrary\\EMail\\": [
+			"/src/"
+		  ]
+		}
+	  },
 	"require": {
 		"swiftmailer/swiftmailer": "5.*",
 		"Trunk/PreferencesLibrary": "0.*"
