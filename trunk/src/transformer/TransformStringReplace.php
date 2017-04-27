@@ -2,9 +2,9 @@
 namespace Trunk\EmailLibrary\EMail\transformer;
 use Trunk\EmailLibrary\EMail\Message;
 
-class TransformStringReplace {
+class TransformStringReplace extends BaseTransformer{
 
-	public function transform( Message $message ) {
+	public function transform( Message &$message ) {
 
 		$body = $message->getBody();
 		$subject = $message->getSubject();

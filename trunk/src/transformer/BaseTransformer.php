@@ -5,7 +5,7 @@ use Trunk\EmailLibrary\EMail\Message;
 
 abstract class BaseTransformer {
 
-	public function transform( Message $message ) {
+	public function transform( Message &$message ) {
 
 	}
 }
