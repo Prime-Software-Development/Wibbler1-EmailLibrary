@@ -14,13 +14,28 @@ class Message {
 	// Array of arrays [ 'email@address', 'contact name' ]
 	protected $to = [];
 
+	/**
+	 * Default destination for the email in case no 'to' address is set
+	 * @var string
+	 */
 	protected $default_to = '';
 
-	// String
+	/**
+	 * Subject of the message
+	 * @var string
+	 */
 	protected $subject = '';
-	// String
+
+	/**
+	 * Body of the message
+	 * @var string
+	 */
 	protected $body = '';
 
+	/**
+	 * Associative array of parameters to replace within the body
+	 * @var array
+	 */
 	protected $params = array();
 
 	/**
@@ -29,7 +44,10 @@ class Message {
 	 */
 	private $namespace = null;
 
-	// Array of associative arrays [ 'filepath'=>'absolute path to the file', 'filename'=>'name of the file' ]
+	/**
+	 * Array of associative arrays [ 'filepath'=>'absolute path to the file', 'filename'=>'name of the file' ]
+	 * @var array
+	 */
 	protected $attachments = [];
 
 	public function __construct( $subject = '', $body = '', $to = [], $from = null, $attachments = null ) {
@@ -44,6 +62,7 @@ class Message {
 	public function setNamespace( $namespace ) {
 		$this->namespace = $namespace;
 	}
+
 	public function setDefaultTo( $contact ) {
 		$this->default_to = $contact;
 	}
