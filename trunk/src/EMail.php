@@ -159,7 +159,6 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		$from_address = $email->getFromAddress();
 		$from_name = $email->getFromName();
 		$subject = $email->getSubject();
-		$body = $email->getBody();
 		$attachments = $email->getAttachments();
 
 		// If we are not on production then use the test email address from the preferences
@@ -194,6 +193,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		$message->setContentType( "text/html" );
 
 		// Update the body - it may have inline images
+		$body = $email->getBody();
 		$body = $this->get_body_html( $email->getNamespace(), $message, $body );
 		$message->setBody( $body );
 
