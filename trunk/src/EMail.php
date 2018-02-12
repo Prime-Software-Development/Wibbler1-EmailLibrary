@@ -61,7 +61,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		$this->smtp_host = $host;
 		$this->smtp_port = $port;
 	}
-	
+
 	/**
 	 * Sets the function to use to retrieve the file paths
 	 * @param $get_file_function
@@ -208,7 +208,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		}
 
 		// Create a new swift message instance
-		$message = \Swift_Message::newInstance();
+		$message = new \Swift_Message();
 		$message->setSubject( $subject );
 		$message->setFrom( $from_address, $from_name );
 		$message->setTo( $to );
@@ -238,9 +238,10 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = \Swift_SmtpTransport::newInstance( 'localhost', 25 );
-		$mailer = \Swift_Mailer::newInstance( $transport );
+		$transport = new \Swift_SmtpTransport( 'localhost', 25 );
+		$mailer = new \Swift_Mailer( $transport );
 
+		$errors = [];
 		$result = $mailer->send( $message, $errors );
 
 		return $result == 0;
