@@ -27,6 +27,18 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 */
 	private $get_file_function = "get_file";
 
+	/**
+	 * Name of the host to connect to
+	 * @var string
+	 */
+	private $smtp_host = "localhost";
+
+	/**
+	 * Port of the email system to connect to
+	 * @var string
+	 */
+	private $smtp_port = "25";
+
 	public function __construct( array $options = null ) {
 		parent::__construct();
 
@@ -40,6 +52,16 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		$this->add_transformer( "default", new TransformStringReplace() );
 	}
 
+	/**
+	 * Set the smtp settings
+	 * @param $host
+	 * @param $port
+	 */
+	public function setSmtpSettings( $host, $port ) {
+		$this->smtp_host = $host;
+		$this->smtp_port = $port;
+	}
+	
 	/**
 	 * Sets the function to use to retrieve the file paths
 	 * @param $get_file_function
@@ -145,7 +167,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = \Swift_SmtpTransport::newInstance( 'localhost', 25 );
+		$transport = \Swift_SmtpTransport::newInstance( $this->smtp_host, $this->smtp_port );
 		$mailer = \Swift_Mailer::newInstance( $transport );
 
 		$result = $mailer->send( $message, $errors );
