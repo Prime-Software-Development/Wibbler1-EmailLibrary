@@ -138,7 +138,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			$body = $this->replace_placeholders( $body, $data_array );
 		}
 
-		$message = \Swift_Message::newInstance();
+		$message = new \Swift_Message();
 		$message->setSubject( $subject );
 		$message->setFrom( $from_address, $from_name );
 		$message->setTo( $to );
@@ -167,8 +167,8 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = \Swift_SmtpTransport::newInstance( $this->smtp_host, $this->smtp_port );
-		$mailer = \Swift_Mailer::newInstance( $transport );
+		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port );
+		$mailer = new \Swift_Mailer( $transport );
 
 		$result = $mailer->send( $message, $errors );
 
