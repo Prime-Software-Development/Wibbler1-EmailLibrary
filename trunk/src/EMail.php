@@ -238,7 +238,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = new \Swift_SmtpTransport( 'localhost', 25 );
+		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port );
 		$mailer = new \Swift_Mailer( $transport );
 
 		$errors = [];
