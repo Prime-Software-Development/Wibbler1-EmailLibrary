@@ -39,6 +39,21 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 */
 	private $smtp_port = "25";
 
+	/**
+	 * @var string
+	 */
+	private $smtp_method = null;
+
+	/**
+	 * @var string
+	 */
+	private $smtp_username = null;
+
+	/**
+	 * @var string
+	 */
+	private $smtp_password = null;
+
 	public function __construct( array $options = null ) {
 		parent::__construct();
 
@@ -57,9 +72,13 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 * @param $host
 	 * @param $port
 	 */
-	public function setSmtpSettings( $host, $port ) {
+	public function setSmtpSettings( $host, $port, $username = null, $password = null, $method = null ) {
 		$this->smtp_host = $host;
 		$this->smtp_port = $port;
+
+		$this->smtp_username = $username;
+		$this->smtp_password = $password;
+		$this->smtp_method = $method;
 	}
 
 	/**
@@ -167,7 +186,9 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port );
+		// Get the transport
+		$transport = $this->_get_smtp_transport();
+
 		$mailer = new \Swift_Mailer( $transport );
 
 		$result = $mailer->send( $message, $errors );
@@ -238,13 +259,31 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port );
+		// Get the transport
+		$transport = $this->_get_smtp_transport();
+
 		$mailer = new \Swift_Mailer( $transport );
 
 		$errors = [];
 		$result = $mailer->send( $message, $errors );
 
 		return $result == 0;
+	}
+
+	/**
+	 * Get the smtp transport for sending the messages over
+	 * @return \Swift_SmtpTransport
+	 */
+	private function _get_smtp_transport() {
+		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port, empty($this->smtp_method) ? null : $this->smtp_method );
+
+		// If there is a username
+		if ( $this->smtp_username !== null ) {
+			// Set the username and password for the transport
+			$transport->setUsername( $this->smtp_username )->setPassword( $this->smtp_password );
+		}
+
+		return $transport;
 	}
 
 	/**
