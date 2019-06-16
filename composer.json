@@ -1,20 +1,30 @@
 {
-	"name": "Trunk/EmailLibrary",
-	"repositories": [
-		{
-			"type": "composer",
-			"url": "http://packages.trunksoftware.co.uk"
-		}
-	],
-	"autoload":{
-		"psr-4": {
-		  "Trunk\\EmailLibrary\\EMail\\": [
-			"/src/"
-		  ]
-		}
-	  },
-	"require": {
-		"swiftmailer/swiftmailer": ">=5.0",
-		"Trunk/PreferencesLibrary": "0.*"
+  "name": "trunk/emaillibrary",
+  "type": "library",
+  "description": "TrunkSoftware Email Library for Wibbler framework",
+  "homepage": "http://www.trunknetworks.com/",
+  "authors": [
+	{
+	  "name": "Chris Weller",
+	  "email": "chris.weller@trunknetworks.com"
 	}
+  ],
+  "repositories": [
+	{
+	  "type": "vcs",
+	  "url": "https://github.com/ChrisWeller/Trunk-Wibbler1-PreferencesLibrary"
+	}
+  ],
+  "autoload": {
+	"psr-4": {
+	  "Trunk\\EmailLibrary\\EMail\\": [
+		"/src/"
+	  ]
+	}
+  },
+  "require": {
+	"php": ">=7",
+	"swiftmailer/swiftmailer": ">=5.0",
+	"trunk/preferenceslibrary": "0.*"
+  }
 }
