@@ -12,7 +12,7 @@
   "repositories": [
 	{
 	  "type": "vcs",
-	  "url": "https://github.com/ChrisWeller/Trunk-Wibbler1-PreferencesLibrary"
+	  "url": "https://github.com/ChrisWeller/Wibbler1-PreferencesLibrary"
 	}
   ],
   "autoload": {
