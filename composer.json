@@ -1,12 +1,12 @@
 {
-  "name": "trunk/emaillibrary",
+  "name": "primesoftwaredevelopment/emaillibrary",
   "type": "library",
-  "description": "TrunkSoftware Email Library for Wibbler framework",
-  "homepage": "http://www.trunknetworks.com/",
+  "description": "Prime Software Development Email Library for the Wibbler framework",
+  "homepage": "http://www.primesoftwaredevelopment.co.uk/",
   "authors": [
 	{
 	  "name": "Chris Weller",
-	  "email": "chris.weller@trunknetworks.com"
+	  "email": "chris@primesoftwaredevelopment.co.uk"
 	}
   ],
   "repositories": [
@@ -25,6 +25,6 @@
   "require": {
 	"php": ">=7",
 	"swiftmailer/swiftmailer": ">=5.0",
-	"trunk/preferenceslibrary": "0.*"
+	"primesoftwaredevelopment/preferenceslibrary": "0.*"
   }
 }
