@@ -25,6 +25,6 @@
   "require": {
 	"php": ">=7",
 	"swiftmailer/swiftmailer": ">=5.0",
-	"primesoftwaredevelopment/preferenceslibrary": "0.*"
+	"primesoftwaredevelopment/preferenceslibrary": "1.*"
   }
 }
