@@ -87,6 +87,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 */
 	function set_get_file_function( $get_file_function ) {
 		$this->get_file_function = $get_file_function;
+		return $this;
 	}
 
 	/**
@@ -95,10 +96,9 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 * @param $companyname
 	 */
 	function set_details( $emailToAddress, $companyname ) {
-
 		$this->to_address = $emailToAddress;
 		$this->company_name = $companyname;
-
+		return $this;
 	}
 
 	/**
@@ -118,6 +118,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	}
 
 	/**
+	 * @deprecated
 	 * Deprecated! Actually send the message
 	 * @param type $subject
 	 * @param type $body
@@ -128,6 +129,8 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 * @return type
 	 */
 	public function email_sendmessage( Message $email, $data_array = null ) {
+		trigger_error("Function email_sendmessage is deprecated.", E_USER_NOTICE);
+
 		#public function email_sendmessage( $subject, $body, $from, $to, $data_array = null, $attachments = null ) {
 		$to = $email->getTo();
 		$from_address = $email->getFromAddress();
@@ -196,6 +199,12 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		return $result == 0;
 	}
 
+	/**
+	 * Send the email
+	 * @param Message $email
+	 * @param string $transformer_group
+	 * @return bool
+	 */
 	public function sendmessage( Message $email, $transformer_group = 'default' ) {
 
 		$to = $email->getTo();
@@ -215,6 +224,9 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 				$subject .= " (" . $to . ")";
 			}
 
+			// Update the email subject
+			$email->setSubject( $subject );
+
 			// Change the destination to the preferences address
 			$to = $this->to_address;
 		}
@@ -230,7 +242,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 
 		// Create a new swift message instance
 		$message = new \Swift_Message();
-		$message->setSubject( $subject );
+		$message->setSubject( $email->getSubject() );
 		$message->setFrom( $from_address, $from_name );
 		$message->setTo( $to );
 		$message->setContentType( "text/html" );

@@ -59,14 +59,40 @@ class Message {
 		if( $attachments ) $this->setAttachments( $attachments );
 	}
 
+	/**
+	 * Get the namespace used for document queries
+	 * @return string
+	 */
+	public function getNamespace() {
+		return $this->namespace;
+	}
+
+	/**
+	 * Set the namespace for document queries
+	 * @param $namespace
+	 * @return $this
+	 */
 	public function setNamespace( $namespace ) {
 		$this->namespace = $namespace;
+		return $this;
 	}
 
+	/**
+	 * Set the default address to send the email to
+	 * @param $contact
+	 * @return $this
+	 */
 	public function setDefaultTo( $contact ) {
 		$this->default_to = $contact;
+		return $this;
 	}
 
+	/**
+	 * Set the email address(es) to send the email to
+	 * @param $contacts
+	 * @return $this
+	 * @throws \Exception
+	 */
 	public function setTo( $contacts ) {
 		if(is_array( $contacts )) {
 
@@ -86,6 +112,7 @@ class Message {
             $this->to = [];
 			$this->to[] = $contacts;
 		}
+		return $this;
 	}
 
 	/**
@@ -96,6 +123,12 @@ class Message {
 		return !empty( $this->to ) ? $this->to : $this->default_to;
 	}
 
+	/**
+	 * Add an email address to send the email to
+	 * @param $contact_email
+	 * @param string|null $contact_name
+	 * @throws \Exception
+	 */
 	public function addTo( $contact_email, $contact_name = null ) {
 		if ( !filter_var( $contact_email, FILTER_VALIDATE_EMAIL) ) {
 			throw new \Exception( "Invalid email address (" . $contact_email . ")" );
@@ -108,6 +141,11 @@ class Message {
 		}
 	}
 
+	/**
+	 * Set who the email is from (name and email)
+	 * @param array|string $contact
+	 * @return $this
+	 */
 	public function setFrom( $contact ) {
 		if( is_array($contact) ) {
 			foreach( $contact as $email=>$name ) {
@@ -117,72 +155,143 @@ class Message {
 		} else {
 			$this->setFromAddress( $contact );
 		}
+		return $this;
 	}
 
+	/**
+	 * Set the from email address
+	 * @param $address
+	 * @return $this
+	 */
 	public function setFromAddress( $address ) {
 		$this->from_address = $address;
+		return $this;
 	}
 
+	/**
+	 * Set the from name
+	 * @param $name
+	 * @return $this
+	 */
 	public function setFromName( $name ) {
 		$this->from_name = $name;
+		return $this;
 	}
 
+	/**
+	 * Get the from email address
+	 * @return null
+	 */
 	public function getFromAddress() {
 		return $this->from_address;
 	}
 
-	public function getNamespace() {
-		return $this->namespace;
-	}
-
+	/**
+	 * Get the from email address
+	 * @return null
+	 */
 	public function getFromName() {
 		return $this->from_name;
 	}
 
+	/**
+	 * Set the subject of the email
+	 * @param $subject
+	 * @return $this
+	 */
 	public function setSubject( $subject ) {
 		$this->subject = $subject;
+		return $this;
 	}
 
+	/**
+	 * Get the subject of the email
+	 * @return string
+	 */
 	public function getSubject() {
 		return $this->subject;
 	}
 
+	/**
+	 * Get the subject of the email with simple string replacement of variables
+	 * @return mixed
+	 */
 	public function getReadySubject() {
 		return $this->replace_placeholders( $this->subject , $this->params );
 	}
 
+	/**
+	 * Set the body of the email
+	 * @param $body
+	 * @return $this
+	 */
 	public function setBody( $body ) {
 		$this->body = $body;
+		return $this;
 	}
 
+	/**
+	 * Get the body of the email
+	 * @return string
+	 */
 	public function getBody() {
 		return $this->body;
 	}
 
+	/**
+	 * Get the body of the email with simple string replacement of variables
+	 * @return mixed
+	 */
 	public function getReadyBody() {
 		return $this->replace_placeholders( $this->body , $this->params );
 	}
 
+	/**
+	 * Set an array of parameters used for replacements by transformers (or the simple string replacement)
+	 * @param array $params
+	 * @return $this
+	 */
 	public function setParams( array $params ) {
 		$this->params = $params;
 		return $this;
 	}
 
+	/**
+	 * Get the array of parameters
+	 * @return array
+	 */
 	public function getParams() {
 		return $this->params;
 	}
 
+	/**
+	 * Set the attacments to add to the email
+	 * @param $attachments
+	 * @return $this
+	 * @throws \Exception
+	 */
 	public function setAttachments( $attachments ) {
 		if(!is_array( $attachments)) {
 			throw new \Exception( "Attachments must be an array." );
 		}
 		$this->attachments = $attachments;
+		return $this;
 	}
 
+	/**
+	 * Get the attachments
+	 * @return array
+	 */
 	public function getAttachments() {
 		return $this->attachments;
 	}
 
+	/**
+	 * Add an attachment to the email
+	 * @param $attachment
+	 * @return $this
+	 * @throws \Exception
+	 */
 	public function addAttachment( $attachment ) {
 		if( $attachment ) {
 			$doc_type = "\\" . $this->namespace . "\\Document";
@@ -197,6 +306,8 @@ class Message {
 			}
 			$this->attachments[] = $attachment;
 		}
+
+		return $this;
 	}
 
 	/**
@@ -210,6 +321,12 @@ class Message {
 		}
 	}
 
+	/**
+	 * Performs a simple replacement of placeholds in the provided message
+	 * @param $message
+	 * @param $options
+	 * @return mixed
+	 */
 	private function replace_placeholders( $message, $options ) {
 
 		foreach ( $options as $key => $value ) {
