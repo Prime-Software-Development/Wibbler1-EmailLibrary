@@ -54,6 +54,11 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 */
 	private $smtp_password = null;
 
+	/**
+	 * @var string
+	 */
+	private $local_domain = null;
+
 	public function __construct( array $options = null ) {
 		parent::__construct();
 
@@ -72,13 +77,14 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 * @param $host
 	 * @param $port
 	 */
-	public function setSmtpSettings( $host, $port, $username = null, $password = null, $method = null ) {
+	public function setSmtpSettings( $host, $port, $username = null, $password = null, $method = null, $local_domain = null ) {
 		$this->smtp_host = $host;
 		$this->smtp_port = $port;
 
 		$this->smtp_username = $username;
 		$this->smtp_password = $password;
 		$this->smtp_method = $method;
+		$this->local_domain = $local_domain;
 	}
 
 	/**
@@ -289,6 +295,11 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	private function _get_smtp_transport() {
 		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port, empty($this->smtp_method) ? null : $this->smtp_method );
 
+		// If a local domain is set
+		if ( $this->local_domain !== null ) {
+			// Set the transport to use the local domain
+			$transport->setLocalDomain( $this->local_domain );
+		}
 		// If there is a username
 		if ( $this->smtp_username !== null ) {
 			// Set the username and password for the transport
