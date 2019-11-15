@@ -296,12 +296,12 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port, empty($this->smtp_method) ? null : $this->smtp_method );
 
 		// If a local domain is set
-		if ( $this->local_domain !== null ) {
+		if ( !empty( $this->local_domain ) ) {
 			// Set the transport to use the local domain
 			$transport->setLocalDomain( $this->local_domain );
 		}
 		// If there is a username
-		if ( $this->smtp_username !== null ) {
+		if ( !empty( $this->smtp_username ) ) {
 			// Set the username and password for the transport
 			$transport->setUsername( $this->smtp_username )->setPassword( $this->smtp_password );
 		}
