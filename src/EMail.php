@@ -292,7 +292,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 	 * Get the smtp transport for sending the messages over
 	 * @return \Swift_SmtpTransport
 	 */
-	private function _get_smtp_transport() {
+	protected function _get_smtp_transport() {
 		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port, empty($this->smtp_method) ? null : $this->smtp_method );
 
 		// If a local domain is set
