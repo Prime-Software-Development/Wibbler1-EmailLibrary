@@ -1,6 +1,9 @@
 <?php
 namespace Trunk\EmailLibrary\EMail;
 use Propel\Runtime\ActiveQuery\Criteria as Criteria;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 use Trunk\EmailLibrary\EMail\transformer\TransformStringReplace;
 
 /**
@@ -246,33 +249,28 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 			}
 		}
 
-		// Create a new swift message instance
-		$message = new \Swift_Message();
-		$message->setSubject( $email->getSubject() );
-		$message->setFrom( $from_address, $from_name );
-		$message->setTo( $to );
-		$message->setContentType( "text/html" );
+		// Create a new symfony emailer email instance
+		$emailMessage = new \Symfony\Component\Mime\Email();
+		$emailMessage->to( $to )
+			->from( new Address( $from_address, $from_name ) )
+			->subject( $email->getSubject() );
 
 		// Update the body - it may have inline images
 		$body = $email->getBody();
-		$body = $this->get_body_html( $email->getNamespace(), $message, $body );
-		$message->setBody( $body );
+		$body = $this->get_body_html( $email->getNamespace(), $emailMessage, $body );
+		$emailMessage->html( $body );
 
 		// If we have an attachment
 		if ( !empty( $attachments ) ) {
 
 			// If the 'filename' is part of the array this must be a single file
 			if ( isset( $attachments[ 'filename' ] ) ) {
-				$sw_attachment = \Swift_Attachment::fromPath( $attachments[ 'filepath' ], 'application/octet-stream' );
-				$sw_attachment->setFilename( $attachments[ 'filename' ] );
-				$message->attach( $sw_attachment );
+				$emailMessage->attachFromPath( $attachments[ 'filepath' ], $attachments[ 'filename' ], 'application/octet-stream');
 			} else {
 				// Iterate over the attachments
 				foreach ( $attachments as $attachment ) {
 					// Add each one to the email
-					$sw_attachment = \Swift_Attachment::fromPath( $attachment[ 'filepath' ], 'application/octet-stream' );
-					$sw_attachment->setFilename( $attachment[ 'filename' ] );
-					$message->attach( $sw_attachment );
+					$emailMessage->attachFromPath( $attachments[ 'filepath' ], $attachments[ 'filename' ], 'application/octet-stream');
 				}
 			}
 		}
@@ -280,41 +278,44 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		// Get the transport
 		$transport = $this->_get_smtp_transport();
 
-		$mailer = new \Swift_Mailer( $transport );
-
-		$errors = [];
-		$result = $mailer->send( $message, $errors );
-
-		return $result == 0;
+		try {
+			// Get the result
+			$result = $transport->send( $emailMessage );
+			return true;
+		}
+		catch( TransportExceptionInterface $e ) {
+			return false;
+		}
 	}
 
 	/**
 	 * Get the smtp transport for sending the messages over
-	 * @return \Swift_SmtpTransport
+	 * @return Transport
 	 */
 	protected function _get_smtp_transport() {
-		$transport = new \Swift_SmtpTransport( $this->smtp_host, $this->smtp_port, empty($this->smtp_method) ? null : $this->smtp_method );
 
-		// If a local domain is set
-		if ( !empty( $this->local_domain ) ) {
-			// Set the transport to use the local domain
-			$transport->setLocalDomain( $this->local_domain );
-		}
 		// If there is a username
 		if ( !empty( $this->smtp_username ) ) {
-			// Set the username and password for the transport
-			$transport->setUsername( $this->smtp_username )->setPassword( $this->smtp_password );
+			// Create the dsn with username / password
+			$dsn = sprintf( 'smtp://%s:%s@%s:%s', $this->smtp_username, $this->smtp_password, $this->smtp_host, $this->smtp_port );
+		}
+		else {
+			// Create the 'simple' dsn
+			$dsn = sprintf('smtp://%s:%s', $this->smtp_host, $this->smtp_port);
+		}
+		if ( !empty( $this->local_domain ) ) {
+			$dsn .= '?local_domain=' . $this->local_domain;
 		}
 
-		return $transport;
+		return Transport::fromDsn( $dsn );
 	}
 
 	/**
 	 * Embeds images if required
-	 * @param \Swift_Message $message
+	 * @param \Symfony\Component\Mime\Email $message
 	 * @return mixed|string
 	 */
-	private function get_body_html( $namespace, \Swift_Message &$message, $text ) {
+	private function get_body_html( $namespace, \Symfony\Component\Mime\Email &$message, $text ) {
 		$document_ids = [ ];
 		$matches = [ ];
 
@@ -346,8 +347,8 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 				$file = $doc->$doc_file_function();
 
 				if ( is_file( $file ) ) {
-					$temp_cid = $message->embed( \Swift_Image::fromPath( $file ) );
-					$CIDs[ $doc->getId() ] = $temp_cid;
+					$message->embedFromPath( $file, 'file-id-' . $doc->getId() );
+					$CIDs[ $doc->getId() ] = 'cid:file-id-' . $doc->getId();
 				}
 			}
 			// Replace document ids with CIDs

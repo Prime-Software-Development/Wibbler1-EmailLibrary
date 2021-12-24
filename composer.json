@@ -24,7 +24,7 @@
   },
   "require": {
 	"php": ">=7",
-	"swiftmailer/swiftmailer": ">=5.0",
+	"symfony/mailer": "*",
 	"primesoftwaredevelopment/preferenceslibrary": "1.*"
   }
 }
