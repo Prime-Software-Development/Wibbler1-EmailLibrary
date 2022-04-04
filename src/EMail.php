@@ -215,7 +215,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 		// If there is a username
 		if ( !empty( $this->smtp_username ) ) {
 			// Create the dsn with username / password
-			$dsn = sprintf( 'smtp://%s:%s@%s:%s', $this->smtp_username, $this->smtp_password, $this->smtp_host, $this->smtp_port );
+			$dsn = sprintf( 'smtp://%s:%s@%s:%s', urlencode( $this->smtp_username ), urlencode( $this->smtp_password ), $this->smtp_host, $this->smtp_port );
 		}
 		else {
 			// Create the 'simple' dsn
