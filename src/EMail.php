@@ -251,8 +251,42 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 
 		// Create a new symfony emailer email instance
 		$emailMessage = new \Symfony\Component\Mime\Email();
-		$emailMessage->to( $to )
-			->from( new Address( $from_address, $from_name ) )
+		// If the to address is a string
+		if ( is_string( $to ) ) {
+			// Set the to address
+			$emailMessage->to( $to );
+		}
+
+		// If the to address is an array
+		if ( is_array( $to ) ) {
+			// Iterate over the to addresses
+			foreach( $to as $index => $item ) {
+				// If the address is a single address
+				if ( is_string( $item ) || is_object( $item ) ) {
+					// If this is the first item
+					if ( $index == 0 ) {
+						$emailMessage->to( $item );
+					}
+					// If this is not the first item
+					else {
+						$emailMessage->addTo( $item );
+					}
+				}
+				// If the address is an array (address / name pair)
+				if ( is_array( $item ) ) {
+					$toAddress = new Address( $to[0], $to[1] );
+					// If this is the first item
+					if ( $index == 0 ) {
+						$emailMessage->to( $toAddress );
+					}
+					// If this is not the first item
+					else {
+						$emailMessage->addTo( $toAddress );
+					}
+				}
+			}
+		}
+		$emailMessage->from( new Address( $from_address, $from_name ) )
 			->subject( $email->getSubject() );
 
 		// Update the body - it may have inline images
