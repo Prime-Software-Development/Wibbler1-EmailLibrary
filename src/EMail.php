@@ -218,7 +218,7 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 				// Iterate over the attachments
 				foreach ( $attachments as $attachment ) {
 					// Add each one to the email
-					$emailMessage->attachFromPath( $attachments[ 'filepath' ], $attachments[ 'filename' ], 'application/octet-stream');
+					$emailMessage->attachFromPath( $attachment[ 'filepath' ], $attachment[ 'filename' ], 'application/octet-stream');
 				}
 			}
 		}
