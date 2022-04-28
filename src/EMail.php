@@ -199,6 +199,9 @@ class EMail extends \Trunk\Wibbler\Modules\base {
 				}
 			}
 		}
+		else {
+			$emailMessage->to( $to );
+		}
 
 		$emailMessage->from( new Address( $from_address, $from_name ) )
 			->subject( $email->getSubject() );
